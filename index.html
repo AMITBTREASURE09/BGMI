@@ -198,13 +198,86 @@
   .foot-id{font-family:var(--mono); font-size:12px; color:var(--muted);}
   .foot-id span{color:var(--zone);}
 
+  /* ---------- REVEAL ---------- */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- TIER LIST ---------- */
+  .tier-table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:14px;}
+  .tier-table th{
+    text-align:left; padding:14px 16px; color:var(--muted); font-weight:500;
+    text-transform:uppercase; font-size:11px; letter-spacing:1px; border-bottom:1px solid var(--panel-line);
+  }
+  .tier-table td{padding:16px; border-bottom:1px solid var(--panel-line); vertical-align:middle;}
+  .tier-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:2px; font-family:var(--display); font-size:20px; font-weight:700;
+  }
+  .tier-S{background:var(--zone); color:#0B0E0C;}
+  .tier-A{background:#8FBF3A; color:#0B0E0C;}
+  .tier-B{background:var(--panel-line); color:var(--ink);}
+  .tier-note{color:var(--muted); font-size:13px; font-family:var(--body);}
+
+  /* ---------- MAPS ---------- */
+  .map-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--panel-line);}
+  .map-card{background:var(--bg); padding:0; position:relative; overflow:hidden;}
+  .map-visual{
+    height:160px; position:relative;
+    background:radial-gradient(circle at 30% 30%, #1c231a, var(--bg) 70%);
+    border-bottom:1px solid var(--panel-line);
+  }
+  .map-visual .dot{
+    position:absolute; width:6px; height:6px; border-radius:50%; background:var(--zone);
+  }
+  .map-visual .ring-mini{
+    position:absolute; top:50%; left:50%; width:90px; height:90px; border-radius:50%;
+    border:1px solid var(--danger); opacity:.5; transform:translate(-50%,-50%);
+  }
+  .map-body{padding:26px 28px;}
+  .map-body .mech-zone{font-family:var(--mono); font-size:11px; color:var(--danger); letter-spacing:2px;}
+  .map-body h3{font-family:var(--display); font-size:26px; text-transform:uppercase; margin:8px 0 10px;}
+  .map-body p{color:var(--muted); font-size:14px;}
+
+  /* ---------- ROADMAP ---------- */
+  .timeline{position:relative; padding-left:36px;}
+  .timeline::before{
+    content:""; position:absolute; left:5px; top:6px; bottom:6px; width:1px; background:var(--panel-line);
+  }
+  .tl-item{position:relative; padding-bottom:44px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:""; position:absolute; left:-36px; top:4px; width:11px; height:11px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--zone);
+  }
+  .tl-item.done::before{background:var(--zone);}
+  .tl-status{font-family:var(--mono); font-size:11px; letter-spacing:1px; color:var(--muted); text-transform:uppercase;}
+  .tl-item.done .tl-status{color:var(--zone);}
+  .tl-item h4{font-family:var(--display); font-size:24px; text-transform:uppercase; margin:6px 0 6px;}
+  .tl-item p{color:var(--muted); font-size:14px; max-width:60ch;}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--panel-line);}
+  .faq-item summary{
+    list-style:none; cursor:pointer; padding:24px 0; display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--display); font-size:22px; text-transform:uppercase; letter-spacing:.5px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{
+    content:"+"; font-family:var(--mono); font-size:22px; color:var(--zone); transition:transform .2s;
+  }
+  .faq-item[open] summary::after{transform:rotate(45deg);}
+  .faq-item p{color:var(--muted); padding-bottom:24px; max-width:64ch; font-size:15px;}
+
   @media (max-width: 860px){
     nav ul{display:none;}
     .about{grid-template-columns:1fr;}
     .mech-grid{grid-template-columns:1fr;}
+    .map-grid{grid-template-columns:1fr;}
     .pillar{grid-template-columns:1fr; text-align:left; gap:6px;}
     .pillar-tag{text-align:left;}
     .collab{padding:40px 24px;}
+    .tier-table{font-size:12px;}
+    .tier-table th:nth-child(3), .tier-table td:nth-child(3){display:none;}
   }
 </style>
 </head>
@@ -214,8 +287,12 @@
   <div class="logo">DROP<span>ZONE</span></div>
   <ul>
     <li><a href="#mechanics">Mechanics</a></li>
+    <li><a href="#tierlist">Tier List</a></li>
+    <li><a href="#maps">Maps</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#content">Content</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#faq">FAQ</a></li>
     <li><a href="#collab">Collab</a></li>
   </ul>
 </nav>
@@ -241,7 +318,7 @@
 <main>
 
   <section id="mechanics">
-    <div class="wrap">
+    <div class="wrap reveal">
       <div class="section-head">
         <span class="section-tag">01</span>
         <h2>Core Mechanics</h2>
@@ -281,11 +358,78 @@
     </div>
   </section>
 
+  <section id="tierlist">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">02</span>
+        <h2>Weapon Tier List</h2>
+      </div>
+      <table class="tier-table">
+        <thead>
+          <tr><th>Tier</th><th>Weapon</th><th>Class</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tier-badge tier-S">S</span></td><td>M416</td><td>Assault Rifle</td><td class="tier-note">Low recoil, best all-round spray control across ranges.</td></tr>
+          <tr><td><span class="tier-badge tier-S">S</span></td><td>AKM</td><td>Assault Rifle</td><td class="tier-note">Highest raw damage in class, rewards recoil mastery.</td></tr>
+          <tr><td><span class="tier-badge tier-A">A</span></td><td>Beryl M762</td><td>Assault Rifle</td><td class="tier-note">Strong burst damage, needs a compensator to tame.</td></tr>
+          <tr><td><span class="tier-badge tier-A">A</span></td><td>Mini14</td><td>Marksman Rifle</td><td class="tier-note">Best mid-range DMR for squads without a dedicated sniper.</td></tr>
+          <tr><td><span class="tier-badge tier-B">B</span></td><td>UMP45</td><td>SMG</td><td class="tier-note">Reliable close-range option, falls off past 50m.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="maps">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">03</span>
+        <h2>Map Guides</h2>
+      </div>
+      <div class="map-grid">
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <div class="ring-mini"></div>
+            <div class="dot" style="top:30%; left:40%;"></div>
+            <div class="dot" style="top:60%; left:65%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">8x8 · CLASSIC</span>
+            <h3>Erangel</h3>
+            <p>Military Base and Georgopol reward aggressive drops; the north farmland belt is where rotations get decided.</p>
+          </div>
+        </article>
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <div class="ring-mini" style="width:70px; height:70px;"></div>
+            <div class="dot" style="top:45%; left:25%;"></div>
+            <div class="dot" style="top:25%; left:70%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">8x8 · DESERT</span>
+            <h3>Miramar</h3>
+            <p>Long sightlines punish careless rotations — vehicle routes through the canyons matter more here than any other map.</p>
+          </div>
+        </article>
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <div class="ring-mini" style="width:60px; height:60px;"></div>
+            <div class="dot" style="top:50%; left:50%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">2x2 · RAPID</span>
+            <h3>Livik</h3>
+            <p>Compressed zone timers mean early aggression usually beats patience — built for fast, high-kill games.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section id="about">
-    <div class="wrap about">
+    <div class="wrap about reveal">
       <div>
         <div class="section-head" style="border:none; padding:0; margin-bottom:24px;">
-          <span class="section-tag">02</span>
+          <span class="section-tag">04</span>
           <h2>About This Hub</h2>
         </div>
         <p>This is an <strong>independent, fan-made project</strong> — not affiliated with or endorsed by KRAFTON. It exists because BGMI's mechanics deserve a clear, no-fluff explanation, and the Indian community deserves a space built specifically for it.</p>
@@ -303,56 +447,6 @@
   </section>
 
   <section id="content">
-    <div class="wrap">
+    <div class="wrap reveal">
       <div class="section-head">
-        <span class="section-tag">03</span>
-        <h2>Content Pillars</h2>
-      </div>
-      <div class="pillars">
-        <div class="pillar">
-          <span class="pillar-code">GUIDE</span>
-          <div><h4>Patch Breakdowns</h4><p>What changed, what it means for your loadout and rotation.</p></div>
-          <span class="pillar-tag">Every update</span>
-        </div>
-        <div class="pillar">
-          <span class="pillar-code">META</span>
-          <div><h4>Weapon & Vehicle Meta</h4><p>Tier lists backed by actual in-game testing, not guesswork.</p></div>
-          <span class="pillar-tag">Ongoing</span>
-        </div>
-        <div class="pillar">
-          <span class="pillar-code">MAP</span>
-          <div><h4>Map & POI Guides</h4><p>Loot routes, rotation paths, and zone-reading for every map.</p></div>
-          <span class="pillar-tag">Ongoing</span>
-        </div>
-        <div class="pillar">
-          <span class="pillar-code">COM</span>
-          <div><h4>Community Spotlights</h4><p>Clips, squads, and moments from Indian players worth sharing.</p></div>
-          <span class="pillar-tag">Weekly</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="collab">
-    <div class="wrap">
-      <div class="collab">
-        <p class="eyebrow" style="justify-content:center;">Open to collaborate</p>
-        <h2>Building For The BGMI Community</h2>
-        <p>If you're part of the BGMI or KRAFTON team and want to talk creator initiatives, community features, or collaboration — reach out. This project is built with the same respect for the game that its players have.</p>
-        <a href="mailto:youremail@example.com" class="btn btn-primary">Get in touch</a>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <div class="wrap foot-row">
-    <div class="logo" style="font-size:20px;">DROP<span>ZONE</span></div>
-    <p class="foot-id">Created by Amit Chouhan &nbsp;·&nbsp; BGMI ID: <span>55525259639</span></p>
-    <p class="foot-id">Unofficial fan project. Not affiliated with KRAFTON.</p>
-  </div>
-</footer>
-
-</body>
-</html>
+                                    
