@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DROP ZONE // BGMI Fan Hub</title>
+<meta name="description" content="An independent BGMI fan hub — mechanics breakdowns, meta guides, and a home for the Indian squad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B0E0C;
+    --panel: #141813;
+    --panel-line: #262b23;
+    --zone: #C9F31D;
+    --danger: #F2542D;
+    --ink: #E8E6DD;
+    --muted: #7C8A74;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Teko', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{outline:2px solid var(--zone); outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  /* ---------- MARQUEE TICKER ---------- */
+  .ticker{
+    position:fixed; top:0; left:0; right:0; z-index:60;
+    background:var(--panel); border-bottom:1px solid var(--panel-line);
+    overflow:hidden; white-space:nowrap; padding:9px 0;
+  }
+  .ticker-track{
+    display:inline-block; padding-left:100%;
+    animation: ticker-scroll 32s linear infinite;
+  }
+  .ticker-track span{
+    font-family:var(--mono); font-size:12px; letter-spacing:1px; color:var(--muted);
+    margin-right:56px; text-transform:uppercase;
+  }
+  .ticker-track span.hot{color:var(--zone);}
+  @keyframes ticker-scroll{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-100%);}
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:34px; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 24px;
+    background:linear-gradient(to bottom, rgba(11,14,12,0.95), transparent);
+  }
+  .logo{
+    font-family:var(--display); font-size:26px; letter-spacing:2px; font-weight:600;
+    text-transform:uppercase;
+  }
+  .logo span{color:var(--zone);}
+  nav ul{list-style:none; display:flex; gap:32px;}
+  nav a{
+    font-family:var(--mono); font-size:12px; letter-spacing:1px; text-transform:uppercase;
+    text-decoration:none; color:var(--muted); transition:color .2s;
+  }
+  nav a:hover{color:var(--ink);}
+  .nav-toggle{display:none;}
+
+  /* ---------- HERO / ZONE ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 45%, #171d14 0%, var(--bg) 62%);
+  }
+  .zone-rings{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:1000px; height:1000px;
+    pointer-events:none;
+  }
+  .ring{
+    position:absolute; top:50%; left:50%; border-radius:50%;
+    border:1px solid var(--zone);
+    transform:translate(-50%,-50%);
+    opacity:0;
+    animation:shrink 6s cubic-bezier(.4,0,.2,1) infinite;
+  }
+  .ring.r1{width:1000px; height:1000px; animation-delay:0s;}
+  .ring.r2{width:1000px; height:1000px; animation-delay:2s;}
+  .ring.r3{width:1000px; height:1000px; animation-delay:4s;}
+  @keyframes shrink{
+    0%{ width:1000px; height:1000px; opacity:0; border-color:var(--zone);}
+    8%{opacity:.5;}
+    70%{opacity:.35; border-color:var(--danger);}
+    100%{ width:120px; height:120px; opacity:0; border-color:var(--danger);}
+  }
+  .hero-content{position:relative; z-index:2; text-align:center; padding:0 20px;}
+  .eyebrow{
+    font-family:var(--mono); font-size:13px; letter-spacing:4px; color:var(--zone);
+    text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .eyebrow::before, .eyebrow::after{content:""; width:28px; height:1px; background:var(--zone); opacity:.6;}
+  h1.title{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(56px, 11vw, 148px);
+    line-height:0.88;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  h1.title .accent{color:var(--zone);}
+  .hero-sub{
+    max-width:560px; margin:22px auto 34px;
+    color:var(--muted); font-size:17px;
+  }
+  .hero-ctas{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13px; letter-spacing:1px; text-transform:uppercase;
+    padding:14px 28px; border-radius:2px; text-decoration:none; display:inline-block;
+    border:1px solid var(--panel-line); transition:all .2s;
+  }
+  .btn-primary{background:var(--zone); color:#0B0E0C; border-color:var(--zone); font-weight:700;}
+  .btn-primary:hover{background:#dbff3f;}
+  .btn-ghost{color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--ink);}
+
+  .scroll-cue{
+    position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:2px;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .scroll-cue::after{
+    content:""; width:1px; height:34px; background:linear-gradient(var(--zone), transparent);
+    animation:pulse-line 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse-line{0%,100%{opacity:.3;} 50%{opacity:1;}}
+
+  /* ---------- SECTION SHARED ---------- */
+  section{padding:120px 0;}
+  .section-head{
+    display:flex; align-items:baseline; gap:18px; margin-bottom:56px;
+    border-bottom:1px solid var(--panel-line); padding-bottom:24px;
+  }
+  .section-tag{
+    font-family:var(--mono); font-size:12px; color:var(--danger); letter-spacing:2px;
+  }
+  .section-head h2{
+    font-family:var(--display); font-size:clamp(36px,5vw,56px); text-transform:uppercase; letter-spacing:1px; font-weight:600;
+  }
+
+  /* ---------- MECHANICS GRID ---------- */
+  .mech-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--panel-line);}
+  .mech-card{
+    background:var(--bg); padding:36px 30px; position:relative;
+    transition:background .25s;
+  }
+  #soundToggle{cursor:pointer; background:transparent;}
+  #soundToggle[aria-pressed="true"]{border-color:var(--zone); color:var(--zone);}
+
+  .mech-card, .map-card{transition:background .25s, transform .3s;}
+  .mech-card:hover, .map-card:hover{transform:translateY(-4px);}
+
+  .map-img{width:100%; height:160px; object-fit:cover; display:block; border-bottom:1px solid var(--panel-line);}
+  .mech-zone{
+    font-family:var(--mono); font-size:12px; color:var(--zone); letter-spacing:2px; margin-bottom:18px; display:block;
+  }
+  .mech-card h3{
+    font-family:var(--display); font-size:28px; text-transform:uppercase; margin-bottom:12px; letter-spacing:.5px;
+  }
+  .mech-card p{color:var(--muted); font-size:15px;}
+
+  /* ---------- ABOUT / STATS ---------- */
+  .about{display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:start;}
+  .about p{color:var(--muted); margin-bottom:18px; font-size:16px; max-width:52ch;}
+  .about strong{color:var(--ink); font-weight:600;}
+  .stat-panel{background:var(--panel); border:1px solid var(--panel-line); padding:32px;}
+  .stat-row{display:flex; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--panel-line); font-family:var(--mono); font-size:13px;}
+  .stat-row:last-child{border-bottom:none;}
+  .stat-row .val{color:var(--zone);}
+
+  /* ---------- LOADOUT / CONTENT PILLARS ---------- */
+  .pillars{display:flex; flex-direction:column;}
+  .pillar{
+    display:grid; grid-template-columns:120px 1fr 200px; align-items:center; gap:24px;
+    padding:28px 0; border-bottom:1px solid var(--panel-line);
+  }
+  .pillar:first-child{border-top:1px solid var(--panel-line);}
+  .pillar-code{font-family:var(--mono); color:var(--danger); font-size:14px;}
+  .pillar h4{font-family:var(--display); font-size:26px; text-transform:uppercase; letter-spacing:.5px;}
+  .pillar p{color:var(--muted); font-size:14px; margin-top:4px;}
+  .pillar-tag{
+    font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:1px;
+    text-align:right; text-transform:uppercase;
+  }
+
+  /* ---------- COLLAB CTA ---------- */
+  .collab{
+    background:var(--panel); border:1px solid var(--panel-line);
+    padding:64px; text-align:center; position:relative; overflow:hidden;
+  }
+  .collab h2{
+    font-family:var(--display); font-size:clamp(32px,5vw,52px); text-transform:uppercase; margin-bottom:18px;
+  }
+  .collab p{color:var(--muted); max-width:56ch; margin:0 auto 32px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--panel-line); padding:48px 0; }
+  .foot-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+  .foot-id{font-family:var(--mono); font-size:12px; color:var(--muted);}
+  .foot-id span{color:var(--zone);}
+
+  /* ---------- REVEAL ---------- */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- TIER LIST ---------- */
+  .tier-table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:14px;}
+  .tier-table th{
+    text-align:left; padding:14px 16px; color:var(--muted); font-weight:500;
+    text-transform:uppercase; font-size:11px; letter-spacing:1px; border-bottom:1px solid var(--panel-line);
+  }
+  .tier-table td{padding:16px; border-bottom:1px solid var(--panel-line); vertical-align:middle;}
+  .tier-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:2px; font-family:var(--display); font-size:20px; font-weight:700;
+  }
+  .tier-S{background:var(--zone); color:#0B0E0C;}
+  .tier-A{background:#8FBF3A; color:#0B0E0C;}
+  .tier-B{background:var(--panel-line); color:var(--ink);}
+  .tier-note{color:var(--muted); font-size:13px; font-family:var(--body);}
+
+  /* ---------- MAPS ---------- */
+  .map-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--panel-line);}
+  .map-card{background:var(--bg); padding:0; position:relative; overflow:hidden; grid-column:span 1;}
+  .map-visual{
+    height:160px; position:relative;
+    background:
+      linear-gradient(rgba(201,243,29,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,243,29,0.05) 1px, transparent 1px),
+      radial-gradient(circle at 30% 30%, #1c231a, var(--bg) 70%);
+    background-size: 24px 24px, 24px 24px, cover;
+    border-bottom:1px solid var(--panel-line);
+    overflow:hidden;
+  }
+  .map-code{
+    position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:11px;
+    color:var(--muted); letter-spacing:1px;
+  }
+  .map-visual .dot{
+    position:absolute; width:6px; height:6px; border-radius:50%; background:var(--zone);
+  }
+  .map-visual .ring-mini{
+    position:absolute; top:50%; left:50%; width:90px; height:90px; border-radius:50%;
+    border:1px solid var(--danger); opacity:.5; transform:translate(-50%,-50%);
+  }
+  .map-body{padding:26px 28px;}
+  .map-body .mech-zone{font-family:var(--mono); font-size:11px; color:var(--danger); letter-spacing:2px;}
+  .map-body h3{font-family:var(--display); font-size:26px; text-transform:uppercase; margin:8px 0 10px;}
+  .map-body p{color:var(--muted); font-size:14px;}
+
+  /* ---------- ROADMAP ---------- */
+  .timeline{position:relative; padding-left:36px;}
+  .timeline::before{
+    content:""; position:absolute; left:5px; top:6px; bottom:6px; width:1px; background:var(--panel-line);
+  }
+  .tl-item{position:relative; padding-bottom:44px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:""; position:absolute; left:-36px; top:4px; width:11px; height:11px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--zone);
+  }
+  .tl-item.done::before{background:var(--zone);}
+  .tl-status{font-family:var(--mono); font-size:11px; letter-spacing:1px; color:var(--muted); text-transform:uppercase;}
+  .tl-item.done .tl-status{color:var(--zone);}
+  .tl-item h4{font-family:var(--display); font-size:24px; text-transform:uppercase; margin:6px 0 6px;}
+  .tl-item p{color:var(--muted); font-size:14px; max-width:60ch;}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--panel-line);}
+  .faq-item summary{
+    list-style:none; cursor:pointer; padding:24px 0; display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--display); font-size:22px; text-transform:uppercase; letter-spacing:.5px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{
+    content:"+"; font-family:var(--mono); font-size:22px; color:var(--zone); transition:transform .2s;
+  }
+  .faq-item[open] summary::after{transform:rotate(45deg);}
+  .faq-item p{color:var(--muted); padding-bottom:24px; max-width:64ch; font-size:15px;}
+
+  /* ---------- PATCH NOTES ---------- */
+  .patch-list{display:flex; flex-direction:column; gap:0;}
+  .patch-item{
+    display:grid; grid-template-columns:140px 1fr; gap:28px;
+    padding:28px 0; border-bottom:1px solid var(--panel-line);
+  }
+  .patch-item:first-child{border-top:1px solid var(--panel-line);}
+  .patch-version{font-family:var(--mono); color:var(--zone); font-size:15px;}
+  .patch-date{font-family:var(--mono); color:var(--muted); font-size:11px; margin-top:6px;}
+  .patch-item h4{font-family:var(--display); font-size:24px; text-transform:uppercase; margin-bottom:8px;}
+  .patch-item ul{color:var(--muted); font-size:14px; padding-left:18px;}
+  .patch-item li{margin-bottom:4px;}
+
+  /* ---------- DISCORD / COMMUNITY ---------- */
+  .discord-band{
+    background:var(--panel); border:1px solid var(--panel-line);
+    padding:56px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;
+  }
+  .discord-band h3{font-family:var(--display); font-size:34px; text-transform:uppercase; margin-bottom:8px;}
+  .discord-band p{color:var(--muted); max-width:44ch;}
+  .discord-stats{display:flex; gap:32px; font-family:var(--mono);}
+  .discord-stats .n{font-size:28px; color:var(--zone); display:block;}
+  .discord-stats .l{font-size:10px; color:var(--muted); letter-spacing:1px; text-transform:uppercase;}
+
+  .spotlight-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:1px; background:var(--panel-line);}
+  .spot-card{background:var(--bg); padding:28px 24px; display:flex; flex-direction:column; gap:14px;}
+  .spot-avatar{
+    width:40px; height:40px; border-radius:2px; background:var(--panel);
+    border:1px solid var(--zone); color:var(--zone);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-size:18px; font-weight:700;
+  }
+  .spot-card p{color:var(--muted); font-size:14px; flex:1;}
+  .spot-name{font-family:var(--mono); font-size:12px; color:var(--ink); letter-spacing:.5px;}
+  .spot-tag{font-family:var(--mono); font-size:10px; color:var(--danger); letter-spacing:1px; text-transform:uppercase;}
+
+  @media (max-width: 860px){
+    nav ul{display:none;}
+    .about{grid-template-columns:1fr;}
+    .mech-grid{grid-template-columns:1fr;}
+    .map-grid{grid-template-columns:1fr;}
+    .pillar{grid-template-columns:1fr; text-align:left; gap:6px;}
+    .pillar-tag{text-align:left;}
+    .collab{padding:40px 24px;}
+    .tier-table{font-size:12px;}
+    .tier-table th:nth-child(3), .tier-table td:nth-child(3){display:none;}
+    .patch-item{grid-template-columns:1fr; gap:8px;}
+    .discord-band{flex-direction:column; text-align:center;}
+    .spotlight-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="hot">◆ ZONE ALERT</span>
+    <span>Patch v3.5 live now — ranked point values rebalanced</span>
+    <span class="hot">◆ META SHIFT</span>
+    <span>M416 and AKM holding S-tier after recoil pass</span>
+    <span class="hot">◆ MAP WATCH</span>
+    <span>Miramar vehicle spawns increased this rotation</span>
+    <span class="hot">◆ COMMUNITY</span>
+    <span>Squad prep threads active in the DropZone Discord</span>
+    <span class="hot">◆ ZONE ALERT</span>
+    <span>Patch v3.5 live now — ranked point values rebalanced</span>
+    <span class="hot">◆ META SHIFT</span>
+    <span>M416 and AKM holding S-tier after recoil pass</span>
+  </div>
+</div>
+<nav>
+  <div class="logo">DROP<span>ZONE</span></div>
+  <ul>
+    <li><a href="#mechanics">Mechanics</a></li>
+    <li><a href="#tierlist">Tier List</a></li>
+    <li><a href="#maps">Maps</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#content">Content</a></li>
+    <li><a href="#patchnotes">Patch Notes</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#discord">Discord</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#collab">Collab</a></li>
+  </ul>
+  <button id="soundToggle" class="btn btn-ghost" style="font-family:var(--mono); font-size:11px; padding:8px 14px;" aria-pressed="false">🔇 SOUND</button>
+</nav>
+
+<header class="hero">
+  <div class="zone-rings" aria-hidden="true">
+    <div class="ring r1"></div>
+    <div class="ring r2"></div>
+    <div class="ring r3"></div>
+  </div>
+  <div class="hero-content">
+    <p class="eyebrow">Unofficial BGMI Fan Hub</p>
+    <h1 class="title">The Zone<br>Never<span class="accent"> Waits.</span></h1>
+    <p class="hero-sub">A fan-built home for BGMI's mechanics, meta, and community — made by a player, for players, for the Indian squad.</p>
+    <div class="hero-ctas">
+      <a href="#mechanics" class="btn btn-primary">Read the breakdowns</a>
+      <a href="#collab" class="btn btn-ghost">Collaborate with us</a>
+    </div>
+  </div>
+  <div class="scroll-cue">SCROLL</div>
+</header>
+
+<main>
+
+  <section id="mechanics">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">01</span>
+        <h2>Core Mechanics</h2>
+      </div>
+      <div class="mech-grid">
+        <article class="mech-card">
+          <span class="mech-zone">ZONE PHASE</span>
+          <h3>Zone Timing</h3>
+          <p>Every circle phase rewards a different decision — rotate early for position, or hold late for third-party control. We break down the timing windows that matter.</p>
+        </article>
+        <article class="mech-card">
+          <span class="mech-zone">LOADOUT</span>
+          <h3>Weapon Meta</h3>
+          <p>Attachment priority, spray patterns, and the weapon tiers that shift with every patch — explained without the guesswork.</p>
+        </article>
+        <article class="mech-card">
+          <span class="mech-zone">ROTATION</span>
+          <h3>Map Reading</h3>
+          <p>Cover lines, vehicle routes, and rotation paths across Erangel, Miramar, and Livik, mapped out for squads that plan ahead.</p>
+        </article>
+        <article class="mech-card">
+          <span class="mech-zone">ECONOMY</span>
+          <h3>Drop Economy</h3>
+          <p>Airdrop timing, loot density by POI, and when a hot drop is actually worth the risk.</p>
+        </article>
+        <article class="mech-card">
+          <span class="mech-zone">SQUAD</span>
+          <h3>Comms & Roles</h3>
+          <p>IGL calling, entry fragging, and support roles — how coordinated squads actually talk to each other mid-fight.</p>
+        </article>
+        <article class="mech-card">
+          <span class="mech-zone">RANKED</span>
+          <h3>Rank Push Strategy</h3>
+          <p>Point systems, placement value vs. kill value, and how to climb without burning out.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="tierlist">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">02</span>
+        <h2>Weapon Tier List</h2>
+      </div>
+      <table class="tier-table">
+        <thead>
+          <tr><th>Tier</th><th>Weapon</th><th>Class</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tier-badge tier-S">S</span></td><td>M416</td><td>Assault Rifle</td><td class="tier-note">Low recoil, best all-round spray control across ranges.</td></tr>
+          <tr><td><span class="tier-badge tier-S">S</span></td><td>AKM</td><td>Assault Rifle</td><td class="tier-note">Highest raw damage in class, rewards recoil mastery.</td></tr>
+          <tr><td><span class="tier-badge tier-A">A</span></td><td>Beryl M762</td><td>Assault Rifle</td><td class="tier-note">Strong burst damage, needs a compensator to tame.</td></tr>
+          <tr><td><span class="tier-badge tier-A">A</span></td><td>Mini14</td><td>Marksman Rifle</td><td class="tier-note">Best mid-range DMR for squads without a dedicated sniper.</td></tr>
+          <tr><td><span class="tier-badge tier-B">B</span></td><td>UMP45</td><td>SMG</td><td class="tier-note">Reliable close-range option, falls off past 50m.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="maps">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">03</span>
+        <h2>Map Guides</h2>
+      </div>
+      <div class="map-grid">
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <span class="map-code">GRID // 8x8</span>
+            <div class="ring-mini"></div>
+            <div class="dot" style="top:30%; left:40%;"></div>
+            <div class="dot" style="top:60%; left:65%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">8x8 · CLASSIC</span>
+            <h3>Erangel</h3>
+            <p>Military Base and Georgopol reward aggressive drops; the north farmland belt is where rotations get decided.</p>
+          </div>
+        </article>
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <span class="map-code">GRID // 8x8</span>
+            <div class="ring-mini" style="width:70px; height:70px;"></div>
+            <div class="dot" style="top:45%; left:25%;"></div>
+            <div class="dot" style="top:25%; left:70%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">8x8 · DESERT</span>
+            <h3>Miramar</h3>
+            <p>Long sightlines punish careless rotations — vehicle routes through the canyons matter more here than any other map.</p>
+          </div>
+        </article>
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <span class="map-code">GRID // 2x2</span>
+            <div class="ring-mini" style="width:60px; height:60px;"></div>
+            <div class="dot" style="top:50%; left:50%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">2x2 · RAPID</span>
+            <h3>Livik</h3>
+            <p>Compressed zone timers mean early aggression usually beats patience — built for fast, high-kill games.</p>
+          </div>
+        </article>
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <span class="map-code">GRID // 4x4</span>
+            <div class="ring-mini" style="width:75px; height:75px;"></div>
+            <div class="dot" style="top:35%; left:55%;"></div>
+            <div class="dot" style="top:65%; left:30%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">4x4 · JUNGLE</span>
+            <h3>Sanhok</h3>
+            <p>Dense foliage and short sightlines favor SMGs and shotguns — the Bootcamp drop is high-risk, high-reward.</p>
+          </div>
+        </article>
+        <article class="map-card">
+          <div class="map-visual" aria-hidden="true">
+            <span class="map-code">GRID // 6x6</span>
+            <div class="ring-mini" style="width:80px; height:80px;"></div>
+            <div class="dot" style="top:40%; left:35%;"></div>
+            <div class="dot" style="top:55%; left:60%;"></div>
+          </div>
+          <div class="map-body">
+            <span class="mech-zone">6x6 · SNOW</span>
+            <h3>Vikendi</h3>
+            <p>Snowmobiles and open snowfields punish slow rotations — the ski resort area rewards early aggression.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about reveal">
+      <div>
+        <div class="section-head" style="border:none; padding:0; margin-bottom:24px;">
+          <span class="section-tag">04</span>
+          <h2>About This Hub</h2>
+        </div>
+        <p>This is an <strong>independent, fan-made project</strong> — not affiliated with or endorsed by KRAFTON. It exists because BGMI's mechanics deserve a clear, no-fluff explanation, and the Indian community deserves a space built specifically for it.</p>
+        <p>Every breakdown here is written from actual matches, patch notes, and testing — not recycled from other sites. The goal is simple: help players understand <strong>why</strong> something works, not just repeat that it does.</p>
+        <p>Long term, this hub is built to grow alongside the game — matching new modes, maps, and metas as they land.</p>
+      </div>
+      <div class="stat-panel">
+        <div class="stat-row"><span>STATUS</span><span class="val">ACTIVE BUILD</span></div>
+        <div class="stat-row"><span>FOCUS</span><span class="val">MECHANICS + META</span></div>
+        <div class="stat-row"><span>REGION</span><span class="val">INDIA</span></div>
+        <div class="stat-row"><span>AFFILIATION</span><span class="val">INDEPENDENT / FAN-MADE</span></div>
+        <div class="stat-row"><span>UPDATE CYCLE</span><span class="val">PATCH-SYNCED</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="content">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">05</span>
+        <h2>Content Pillars</h2>
+      </div>
+      <div class="pillars">
+        <div class="pillar">
+          <span class="pillar-code">GUIDE</span>
+          <div><h4>Patch Breakdowns</h4><p>What changed, what it means for your loadout and rotation.</p></div>
+          <span class="pillar-tag">Every update</span>
+        </div>
+        <div class="pillar">
+          <span class="pillar-code">META</span>
+          <div><h4>Weapon & Vehicle Meta</h4><p>Tier lists backed by actual in-game testing, not guesswork.</p></div>
+          <span class="pillar-tag">Ongoing</span>
+        </div>
+        <div class="pillar">
+          <span class="pillar-code">MAP</span>
+          <div><h4>Map & POI Guides</h4><p>Loot routes, rotation paths, and zone-reading for every map.</p></div>
+          <span class="pillar-tag">Ongoing</span>
+        </div>
+        <div class="pillar">
+          <span class="pillar-code">COM</span>
+          <div><h4>Community Spotlights</h4><p>Clips, squads, and moments from Indian players worth sharing.</p></div>
+          <span class="pillar-tag">Weekly</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">06</span>
+        <h2>Roadmap</h2>
+      </div>
+      <div class="timeline">
+        <div class="tl-item done">
+          <span class="tl-status">Shipped</span>
+          <h4>Core Mechanics Library</h4>
+          <p>Zone timing, weapon meta, and rotation breakdowns covering all core maps.</p>
+        </div>
+        <div class="tl-item done">
+          <span class="tl-status">Shipped</span>
+          <h4>Weapon Tier List</h4>
+          <p>Tested tier rankings updated alongside balance patches.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-status">In progress</span>
+          <h4>Video Breakdown Series</h4>
+          <p>Short clips walking through rotations and fight decisions frame by frame.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-status">Planned</span>
+          <h4>Community Clip Submissions</h4>
+          <p>A space for Indian squads to submit and get featured plays reviewed.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-status">Planned</span>
+          <h4>Esports Match Recaps</h4>
+          <p>Coverage of BGMI esports scrims and tournaments from a strategy angle.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="patchnotes">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">06</span>
+        <h2>Patch Notes</h2>
+      </div>
+      <div class="patch-list">
+        <div class="patch-item">
+          <div>
+            <div class="patch-version">v3.5</div>
+            <div class="patch-date">Current update</div>
+          </div>
+          <div>
+            <h4>Ranked & Weapon Balance</h4>
+            <ul>
+              <li>Assault rifle recoil curves adjusted across mid-range engagements.</li>
+              <li>Ranked point distribution rebalanced for placement vs. kill value.</li>
+              <li>New seasonal map rotation added to casual queue.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="patch-item">
+          <div>
+            <div class="patch-version">v3.4</div>
+            <div class="patch-date">Previous update</div>
+          </div>
+          <div>
+            <h4>Vehicle & Airdrop Changes</h4>
+            <ul>
+              <li>Vehicle spawn density increased on Miramar.</li>
+              <li>Airdrop loot pool refreshed with updated attachment weights.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <p style="color:var(--muted); font-size:13px; margin-top:20px; font-family:var(--mono);">Tracked and broken down every update, so the squad never rotates in blind.</p>
+    </div>
+  </section>
+
+  <section id="discord">
+    <div class="wrap reveal">
+      <div class="discord-band">
+        <div>
+          <h3>Join The Squad</h3>
+          <p>Clips, rotations, and community discussion — the DropZone Discord is where the fan hub actually lives.</p>
+        </div>
+        <div class="discord-stats">
+          <div><span class="n">Growing</span><span class="l">Daily Members</span></div>
+          <div><span class="n">Live</span><span class="l">Match Threads</span></div>
+        </div>
+        <a href="#" class="btn btn-primary">Join Discord</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="spotlight">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">07</span>
+        <h2>Community Spotlight</h2>
+      </div>
+      <div class="spotlight-grid">
+        <div class="spot-card">
+          <div class="spot-avatar">RK</div>
+          <p>"The Miramar rotation guide changed how our squad reads canyon fights. Genuinely better than most paid coaching content."</p>
+          <div><div class="spot-name">Rakesh K.</div><div class="spot-tag">Ranked Diamond</div></div>
+        </div>
+        <div class="spot-card">
+          <div class="spot-avatar">SP</div>
+          <p>"Finally a tier list that explains WHY a gun is good instead of just ranking it. Switched to the M416 setup and my spray control is night and day."</p>
+          <div><div class="spot-name">Simran P.</div><div class="spot-tag">Squad IGL</div></div>
+        </div>
+        <div class="spot-card">
+          <div class="spot-avatar">AV</div>
+          <p>"Been following the patch breakdowns since v3.4. It's the fastest place to actually understand what changed and why it matters."</p>
+          <div><div class="spot-name">Aditya V.</div><div class="spot-tag">Content Creator</div></div>
+        </div>
+        <div class="spot-card">
+          <div class="spot-avatar">NM</div>
+          <p>"Our squad uses the zone-timing breakdown before every scrim. It's become part of our actual prep routine, not just something we read once."</p>
+          <div><div class="spot-name">Nikhil M.</div><div class="spot-tag">Scrim Captain</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap reveal">
+      <div class="section-head">
+        <span class="section-tag">07</span>
+        <h2>FAQ</h2>
+      </div>
+      <div>
+        <details class="faq-item" open>
+          <summary>Is this an official KRAFTON or BGMI site?</summary>
+          <p>No — this is an independent fan project, built by a player. It's not affiliated with or endorsed by KRAFTON.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How often is content updated?</summary>
+          <p>Mechanics and tier list content is refreshed alongside every major patch. Community and map content is updated on a rolling weekly basis.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I contribute or submit clips?</summary>
+          <p>Community submissions are on the roadmap. In the meantime, reach out directly through the contact link below.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can Krafton or creators reach out for collaboration?</summary>
+          <p>Yes — that's exactly what this hub is built to support. Use the contact button in the section below.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="collab">
+    <div class="wrap reveal">
+      <div class="collab">
+        <p class="eyebrow" style="justify-content:center;">Open to collaborate</p>
+        <h2>Building For The BGMI Community</h2>
+        <p>If you're part of the BGMI or KRAFTON team and want to talk creator initiatives, community features, or collaboration — reach out. This project is built with the same respect for the game that its players have.</p>
+        <a href="mailto:amitchouhan9522@gmail.com" class="btn btn-primary">Get in touch</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div class="logo" style="font-size:20px;">DROP<span>ZONE</span></div>
+    <p class="foot-id">Created by Amit Chouhan &nbsp;·&nbsp; BGMI ID: <span>55525259639</span></p>
+    <p class="foot-id">Unofficial fan project. Not affiliated with KRAFTON.</p>
+  </div>
+</footer>
+
+<script>
+  // Sound toggle using real royalty-free audio files (Mixkit).
+  let soundOn = false;
+  const sfxHover = new Audio('energy-hover.wav');
+  const sfxSelect = new Audio('ui-select.wav');
+  const sfxAction = new Audio('action-shot.mp3');
+  [sfxHover, sfxSelect, sfxAction].forEach(a => { a.volume = 0.35; });
+
+  function playSfx(audioEl){
+    if(!soundOn) return;
+    audioEl.currentTime = 0;
+    audioEl.play().catch(()=>{});
+  }
+
+  const soundBtn = document.getElementById('soundToggle');
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.setAttribute('aria-pressed', soundOn);
+    soundBtn.textContent = soundOn ? '🔊 SOUND' : '🔇 SOUND';
+    if(soundOn) playSfx(sfxSelect);
+  });
+
+  // Ambient hover feedback on interactive cards/links
+  document.querySelectorAll('a.btn, .mech-card, .map-card').forEach(el => {
+    el.addEventListener('mouseenter', () => playSfx(sfxHover));
+  });
+  // Slightly punchier sound on primary CTA clicks (e.g. Join Discord, Get in touch)
+  document.querySelectorAll('.btn-primary').forEach(el => {
+    el.addEventListener('click', () => playSfx(sfxAction));
+  });
+  // FAQ accordion gets the "select" click
+  document.querySelectorAll('.faq-item summary').forEach(el => {
+    el.addEventListener('click', () => playSfx(sfxSelect));
+  });
+
+  // Subtle 3D tilt on cards for a more tactile, animated feel.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.mech-card, .map-card, .spot-card').forEach(card => {
+      card.style.transformStyle = 'preserve-3d';
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `translateY(-4px) rotateX(${y * -4}deg) rotateY(${x * 4}deg)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+  }
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const items = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    items.forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
+</script>
+</body>
+</html>
